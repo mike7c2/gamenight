@@ -30,9 +30,9 @@ public class MyGdxGame extends ApplicationAdapter {
         font = new BitmapFont();
         font.setColor(Color.RED);
 
-        spiderPig = new SpiderPig();
-
         initBox2d();
+
+        spiderPig = new SpiderPig(world);
 	}
     private BitmapFont font;
 	private double accumulator;
