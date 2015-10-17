@@ -57,7 +57,7 @@ public class SpiderPig {
 
     public void update()
     {
-
+        sprite.setPosition(body.getPosition().x, body.getPosition().y);
     }
 
     public Sprite getSprite()
@@ -65,14 +65,14 @@ public class SpiderPig {
         return sprite;
     }
 
-    public int getX()
+    public float getX()
     {
-        return x;
+        return sprite.getX();
     }
 
-    public int getY()
+    public float getY()
     {
-        return y;
+        return sprite.getY();
     }
 
 

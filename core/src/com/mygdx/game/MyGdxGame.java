@@ -17,41 +17,25 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture img;
-
 	SpiderPig spiderPig;
-    Sprite spriteSpiderPig;
-    int countX = 0;
-    int countY = 0;
+
+    World world;
+    Box2DDebugRenderer renderer;
 
 	@Override
 	public void create () {
         batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.RED);
 
-        initBox2d();
+        world = new World(new Vector2(0, 10), true);
+        renderer = new Box2DDebugRenderer();
 
         spiderPig = new SpiderPig(world);
 	}
-    private BitmapFont font;
+
 	private double accumulator;
 	private double currentTime;
 	private float step = 1.0f / 60.0f;
-
     private int count = 0;
-
-    private World world;
-    private Box2DDebugRenderer renderer;
-
-
-    private void initBox2d()
-    {
-        world = new World(new Vector2(0, -10), true);
-        renderer = new Box2DDebugRenderer();
-
-
-    }
 
 	@Override
 	public void render() {
@@ -65,13 +49,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		while ( accumulator >= step){
             //Step the game here
-
 			accumulator -= step;
             count += 1;
-
-            // spiderpig moving junk
-            countX ++;
-            countY ++;
 
             spiderPig.update();
             world.step(step, 1, 1);
