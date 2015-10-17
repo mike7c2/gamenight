@@ -73,6 +73,7 @@ public class MyGdxGame extends ApplicationAdapter {
             countX ++;
             countY ++;
 
+            spiderPig.update();
             world.step(step, 1, 1);
 
         }

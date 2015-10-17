@@ -24,6 +24,11 @@ public class SpiderPig {
 
     }
 
+    public void update()
+    {
+
+    }
+
     public Sprite getSprite()
     {
         return sprite;
