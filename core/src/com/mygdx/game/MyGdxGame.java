@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
+
 
 
 public class MyGdxGame extends ApplicationAdapter {
@@ -30,6 +33,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		// spiderpig texture
         spiderPig = new Texture(Gdx.files.internal("spiderpig.png"));
         spriteSpiderPig = new Sprite(spiderPig);
+
+        initBox2d();
 	}
     private BitmapFont font;
 	private double accumulator;
@@ -38,15 +43,21 @@ public class MyGdxGame extends ApplicationAdapter {
 
     private int count = 0;
 
+    private World world;
+    private Box2DDebugRenderer renderer;
+
+
+    private void initBox2d()
+    {
+        world = new World(new Vector2(0, -10), true);
+        renderer = new Box2DDebugRenderer();
+
+
+    }
 
 	@Override
 	public void render() {
-		// spiderpig moving junk
-        countX ++;
-        countY ++;
-		batch.begin();
-		batch.draw(spiderPig, countX, countY, 100, 50);
-		batch.end();
+
 
 		double newTime = TimeUtils.millis() / 1000.0;
 		double frameTime = Math.min(newTime - currentTime, 0.25);
@@ -55,10 +66,17 @@ public class MyGdxGame extends ApplicationAdapter {
         accumulator += deltaTime;
 
 		while ( accumulator >= step){
+            //Step the game here
+
 			accumulator -= step;
             count += 1;
 
-			//Step the game here
+            // spiderpig moving junk
+            countX ++;
+            countY ++;
+
+            world.step(step, 1, 1);
+
         }
 
         //Do the drawing here
@@ -71,6 +89,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.begin();
 
         font.draw(batch, "Hello World " + Integer.toString(count), 200 + (count % 200), 200 + (count % 200));
+        batch.draw(spiderPig, countX, countY, 100, 50);
 
         batch.end();
 
