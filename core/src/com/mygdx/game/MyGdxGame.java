@@ -19,7 +19,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
 
-	Texture spiderPig;
+	SpiderPig spiderPig;
     Sprite spriteSpiderPig;
     int countX = 0;
     int countY = 0;
@@ -30,9 +30,7 @@ public class MyGdxGame extends ApplicationAdapter {
         font = new BitmapFont();
         font.setColor(Color.RED);
 
-		// spiderpig texture
-        spiderPig = new Texture(Gdx.files.internal("spiderpig.png"));
-        spriteSpiderPig = new Sprite(spiderPig);
+        spiderPig = new SpiderPig();
 
         initBox2d();
 	}
@@ -88,8 +86,7 @@ public class MyGdxGame extends ApplicationAdapter {
         //Redraw all the guff
 		batch.begin();
 
-        font.draw(batch, "Hello World " + Integer.toString(count), 200 + (count % 200), 200 + (count % 200));
-        batch.draw(spiderPig, countX, countY, 100, 50);
+        batch.draw(spiderPig.getSprite(), spiderPig.getX(), spiderPig.getY());
 
         batch.end();
 
@@ -100,7 +97,6 @@ public class MyGdxGame extends ApplicationAdapter {
     @Override
     public void dispose() {
         batch.dispose();
-        spiderPig.dispose();
     }
 
     @Override
