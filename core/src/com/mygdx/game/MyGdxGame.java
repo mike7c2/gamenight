@@ -34,6 +34,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     Surface top;
     Surface bottom;
 
+    Obstacle obstacle;
+
 	@Override
 	public void create () {
         batch = new SpriteBatch();
@@ -48,6 +50,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         top = new Surface(world, true);
         bottom = new Surface(world, false);
+
+        obstacle = new Obstacle(world);
 
         // Initialize touch message text
         touchInit();
@@ -82,6 +86,9 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
             count += 1;
 
             spiderPig.update();
+            top.update();
+            bottom.update();
+            obstacle.update();
             world.step(step, 1, 1);
 
             // Get screen touches and display messages
@@ -93,7 +100,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         //Clear the screen
 		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //Redraw all the guff
 		batch.begin();
@@ -101,6 +108,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         spiderPig.getSprite().draw(batch);
         top.getSprite().draw(batch);
         bottom.getSprite().draw(batch);
+        obstacle.getSprite().draw(batch);
 
         batch.end();
 
@@ -131,6 +139,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         public float touchY = 0;
         public boolean touched = false;
     }
+
+
 
     public void touchInit() {
         w = Gdx.graphics.getWidth();

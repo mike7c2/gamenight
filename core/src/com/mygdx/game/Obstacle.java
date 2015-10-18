@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -13,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 /**
  * Created by mike on 18/10/15.
  */
-public class SpiderPig {
+public class Obstacle{
 
     private Sprite sprite;
     private Texture texture;
@@ -22,16 +23,21 @@ public class SpiderPig {
     private int x;
     private int y;
 
-    public SpiderPig(World world)
+    private int count;
+
+    public Obstacle(World world)
     {
-        texture = new Texture(Gdx.files.internal("spiderpig.png"));
+        texture = new Texture(Gdx.files.internal("dog.jpg"));
         sprite = new Sprite(texture);
-        sprite.setSize(100, 100);
+
+
+        sprite.setSize(Gdx.graphics.getWidth()/6, Gdx.graphics.getHeight()/4);
+
+        sprite.setPosition(Gdx.graphics.getWidth()/3,Gdx.graphics.getHeight()/8);
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set(sprite.getX(), sprite.getY());
-
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
@@ -40,13 +46,16 @@ public class SpiderPig {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1f;
-
         Fixture fixture = body.createFixture(fixtureDef);
+
     }
 
     public void update()
     {
-        sprite.setPosition(body.getPosition().x, body.getPosition().y);
+        count += Gdx.graphics.getWidth()/1024;
+        body.setTransform(Gdx.graphics.getWidth() - (count % Gdx.graphics.getWidth()),0,0);
+        sprite.setX(body.getPosition().x);
+
     }
 
     public Sprite getSprite()
