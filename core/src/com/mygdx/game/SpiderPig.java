@@ -24,7 +24,7 @@ public class SpiderPig {
 
     public SpiderPig(World world)
     {
-        texture = new Texture(Gdx.files.internal("spiderpig.png"));
+        texture = new Texture(Gdx.files.internal("orangetest.bmp"));
         sprite = new Sprite(texture);
         sprite.setSize(Gdx.graphics.getWidth()/8, Gdx.graphics.getHeight()/8);
         sprite.flip(false,true);

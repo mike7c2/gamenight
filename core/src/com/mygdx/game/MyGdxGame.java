@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import sun.rmi.runtime.Log;
 
@@ -43,6 +44,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     float gravity = 0f;
     float jumpVelocity = 0f;
 
+    Random randomGenerator = new Random();
+
 	@Override
 	public void create () {
 
@@ -60,8 +63,10 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         spiderPig = new SpiderPig(world);
 
         // create surfaces and obstacles
-        top = new Surface(world, true);
-        bottom = new Surface(world, false);
+
+
+        top = new Surface(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8, 16, 0, false);
+        bottom = new Surface(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8, 16, (Gdx.graphics.getHeight() / 8) * 7, true);
         obstacles.add(new Obstacle(world));
 
         // Initialize touch screen handling
@@ -107,10 +112,36 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
             top.update();
             bottom.update();
 
+            int obstacleChance = randomGenerator.nextInt(10000);
+
+            if (obstacleChance > 9992)
+            {
+                obstacles.add(new Obstacle(world));
+            }
+
+
+            ArrayList<Obstacle> removeObstacles = new ArrayList<Obstacle>();
+
             for (Obstacle o : obstacles)
             {
                 o.update();
+
+                if (o.isGone())
+                {
+                    removeObstacles.add(o);
+                }
+
             }
+
+            for (Obstacle o : removeObstacles)
+            {
+                obstacles.remove(o);
+            }
+
+
+
+
+
 
             world.step(step, 1, 1);
 
@@ -129,8 +160,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 		batch.begin();
 
         spiderPig.getSprite().draw(batch);
-        top.getSprite().draw(batch);
-        bottom.getSprite().draw(batch);
+        top.draw(batch);
+        bottom.draw(batch);
 
         for (Obstacle o : obstacles)
         {
@@ -140,6 +171,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         batch.end();
 
 //        System.out.println("Woo loop! " + Integer.toString(count));
+
+
 
 	}
 

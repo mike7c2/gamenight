@@ -23,7 +23,9 @@ public class Obstacle{
     private int x;
     private int y;
 
-    private int count;
+    private int count = 0;
+
+    private boolean isGone = false;
 
     public Obstacle(World world)
     {
@@ -53,9 +55,21 @@ public class Obstacle{
     public void update()
     {
         count += Gdx.graphics.getWidth()/1024;
-        body.setTransform(Gdx.graphics.getWidth() - (count % Gdx.graphics.getWidth()),0,0);
+
+        body.setTransform(Gdx.graphics.getWidth() - count,0,0);
+
+        if (count > Gdx.graphics.getWidth())
+        {
+            isGone = true;
+        }
+
         sprite.setX(body.getPosition().x);
 
+    }
+
+    public boolean isGone()
+    {
+        return isGone;
     }
 
     public Sprite getSprite()
