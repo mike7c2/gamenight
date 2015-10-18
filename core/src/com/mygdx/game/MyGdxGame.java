@@ -66,7 +66,7 @@ public class MyGdxGame extends ApplicationAdapter {
         //Redraw all the guff
 		batch.begin();
 
-        batch.draw(spiderPig.getSprite(), spiderPig.getX(), spiderPig.getY());
+        spiderPig.getSprite().draw(batch);
 
         batch.end();
 

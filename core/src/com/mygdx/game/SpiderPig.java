@@ -26,6 +26,7 @@ public class SpiderPig {
     {
         texture = new Texture(Gdx.files.internal("spiderpig.png"));
         sprite = new Sprite(texture);
+        sprite.setSize(100, 100);
 
         // Now create a BodyDefinition.  This defines the physics objects type and position in the simulation
         BodyDef bodyDef = new BodyDef();
@@ -45,7 +46,6 @@ public class SpiderPig {
 
         // FixtureDef is a confusing expression for physical properties
         // Basically this is where you, in addition to defining the shape of the
-
         // you also define it's properties like density, restitution and others we will see shortly
         // If you are wondering, density and area are used to calculate over all mass
         FixtureDef fixtureDef = new FixtureDef();
@@ -74,7 +74,5 @@ public class SpiderPig {
     {
         return sprite.getY();
     }
-
-
 
 }
