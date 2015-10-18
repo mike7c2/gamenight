@@ -30,6 +30,8 @@ public class Surface{
     float noOfBlocks;
     float height;
     float blockLength;
+    float speed = -10.0f;
+
     World world;
     boolean inverted;
 
@@ -41,10 +43,10 @@ public class Surface{
         float blockThickness = this.thickness * (1 + randomGenerator.nextInt(2));
         if (inverted)
         {
-            return new SurfaceBlock(world, texture, -blockLength, (bodyStartY+this.thickness) - blockThickness, length, blockLength, blockThickness, 10.0f);
+            return new SurfaceBlock(world, texture, length, (bodyStartY+this.thickness) - blockThickness, blockLength, blockThickness, speed);
         }
         else {
-            return new SurfaceBlock(world, texture, -blockLength, bodyStartY, length, blockLength, blockThickness, 10.0f);
+            return new SurfaceBlock(world, texture, length, bodyStartY, blockLength, blockThickness, speed);
         }
     }
 
@@ -67,7 +69,7 @@ public class Surface{
         this.blockLength = blockLength;
 
         for (int i = 0; i < (noOfBlocks + 1); i++) {
-            SurfaceBlock b = new SurfaceBlock(world, texture, (blockLength * i) - blockLength, bodyStartY, length, blockLength, thickness, 10.0f);
+            SurfaceBlock b = new SurfaceBlock(world, texture, (blockLength * i), bodyStartY, blockLength, thickness, speed);
             blocks.add(b);
         }
 
@@ -116,10 +118,9 @@ public class Surface{
         private World world;
         private Body body;
         private Sprite sprite;
+        private float width;
 
-        private float endX;
-
-        public SurfaceBlock(World world, Texture texture, float startX, float startY, float endX, float width, float height, float speed)
+        public SurfaceBlock(World world, Texture texture, float startX, float startY, float width, float height, float speed)
         {
 
             System.out.println("Generating surface block : " + Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(width) + " " + Float.toString(height));
@@ -144,7 +145,7 @@ public class Surface{
 
             sprite.setPosition(body.getPosition().x, body.getPosition().y);
 
-            this.endX = endX;
+            this.width = width;
             this.world = world;
         }
 
@@ -159,7 +160,7 @@ public class Surface{
             boolean ret = false;
 
             //Check if this block has gone off screen
-            if (body.getPosition().x > endX )
+            if (body.getPosition().x < -width )
             {
                 ret = true;
 
