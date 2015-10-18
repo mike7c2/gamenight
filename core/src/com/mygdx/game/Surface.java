@@ -43,18 +43,18 @@ public class Surface{
         float blockThickness = this.thickness * (1 + randomGenerator.nextInt(2));
         if (inverted)
         {
-            return new SurfaceBlock(world, texture, length, (bodyStartY+this.thickness) - blockThickness, blockLength, blockThickness, speed);
+            return new SurfaceBlock(world, texture, length, bodyStartY - (blockThickness/2), blockLength, blockThickness, speed);
         }
         else {
-            return new SurfaceBlock(world, texture, length, bodyStartY, blockLength, blockThickness, speed);
+            return new SurfaceBlock(world, texture, length, bodyStartY + (blockThickness/2), blockLength, blockThickness, speed);
         }
     }
 
-    public Surface(World world, float length, float thickness, float noOfBlocks, float height, boolean inverted)
+    public Surface(World world, float length, float thickness, float noOfBlocks, float height, boolean inverted, float speed)
     {
 
-        texture = new Texture(Gdx.files.internal("greytest.bmp"));
-
+        texture = new Texture(Gdx.files.internal("brick.jpg"));
+        this.speed = speed;
         this.world = world;
         this.bodyStartX = 0;
         this.bodyStartY = height;
@@ -108,6 +108,7 @@ public class Surface{
         //Loop over each of the elements making up the surface and update them
         for (SurfaceBlock s : blocks)
         {
+            System.out.println("Drawing sprinte " + Float.toString(s.getSprite().getX()) + " " + Float.toString(s.getSprite().getY()));
             s.getSprite().draw(batch);
 
         }
@@ -136,14 +137,14 @@ public class Surface{
             body.setLinearVelocity(speed, 0);
 
             PolygonShape shape = new PolygonShape();
-            shape.setAsBox(width, height);
+            shape.setAsBox(width/2, height/2);
 
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = shape;
             fixtureDef.density = 1f;
             Fixture fixture = body.createFixture(fixtureDef);
 
-            sprite.setPosition(body.getPosition().x, body.getPosition().y);
+            sprite.setPosition(body.getPosition().x  - (sprite.getWidth() / 2), body.getPosition().y  - (sprite.getHeight() / 2));
 
             this.width = width;
             this.world = world;
@@ -151,8 +152,10 @@ public class Surface{
 
         public void update()
         {
-            sprite.setX(body.getPosition().x);
-            sprite.setY(body.getPosition().y);
+            sprite.setX(body.getPosition().x - (sprite.getWidth() / 2));
+            sprite.setY(body.getPosition().y - (sprite.getHeight() / 2));
+
+            //System.out.println("Setting sprite " + sprite.getX() + " " + sprite.getWidth());
         }
 
         public boolean offScreen()

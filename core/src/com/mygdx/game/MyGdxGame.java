@@ -6,10 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -41,16 +43,22 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     // Obstacles
     List<Obstacle> obstacles = new ArrayList<Obstacle>();
     // Physics
-    float gravity = 0f;
-    float jumpVelocity = 0f;
+    float gravity = 1.0f;
+    float jumpVelocity = 5.0f;
+    float jumpVelocity2 = 1.0f;
+
+    //Game world size
+    float worldWidth = 100.0f;
+    float worldHeight = 40.0f;
+
+    private OrthographicCamera cam;
+
 
     Random randomGenerator = new Random();
 
 	@Override
 	public void create () {
 
-        gravity = Gdx.graphics.getHeight()/200;
-        jumpVelocity = Gdx.graphics.getHeight()/20;
 
         // Create world with 2 possible gravity vectors
         worldVectorUp = new Vector2(0,gravity);
@@ -60,14 +68,18 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         // Create spiderpig sprite
         batch = new SpriteBatch();
-        spiderPig = new SpiderPig(world, Gdx.graphics.getWidth()/32, Gdx.graphics.getHeight()/24, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        spiderPig = new SpiderPig(world, worldWidth/32, worldHeight/24, worldWidth/2, worldHeight/2);
 
         // create surfaces and obstacles
 
+        top = new Surface(world, worldWidth, worldHeight / 8, 16, 0, false, -1.0f);
+        bottom = new Surface(world, worldWidth, worldHeight / 8, 16, worldHeight, true, -1.0f);
 
-        top = new Surface(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8, 16, 0, false);
-        bottom = new Surface(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8, 16, (Gdx.graphics.getHeight() / 8) * 7, true);
-        obstacles.add(new Obstacle(world));
+        //obstacles.add(new Obstacle(world));
+
+        cam = new OrthographicCamera(worldWidth, worldHeight);
+        cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
+        cam.update();
 
         // Initialize touch screen handling
         touchInit();
@@ -112,12 +124,12 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
             top.update();
             bottom.update();
 
-            int obstacleChance = randomGenerator.nextInt(10000);
+            //int obstacleChance = randomGenerator.nextInt(10000);
 
-            if (obstacleChance > 9992)
-            {
-                obstacles.add(new Obstacle(world));
-            }
+            //if (obstacleChance > 9992)
+            //{
+            //    obstacles.add(new Obstacle(world));
+            //}
 
 
             ArrayList<Obstacle> removeObstacles = new ArrayList<Obstacle>();
@@ -138,11 +150,6 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
                 obstacles.remove(o);
             }
 
-
-
-
-
-
             world.step(step, 1, 1);
 
             // Handle screen touches
@@ -152,6 +159,9 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         //Do the drawing here
 
+        cam.update();
+        batch.setProjectionMatrix(cam.combined);
+
         //Clear the screen
 		Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -160,6 +170,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 		batch.begin();
 
         spiderPig.draw(batch);
+
         top.draw(batch);
         bottom.draw(batch);
 
@@ -167,6 +178,9 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         {
             o.getSprite().draw(batch);
         }
+
+        Matrix4 debugMatrix=new Matrix4(cam.combined);
+        //renderer.render(world, debugMatrix);
 
         batch.end();
 
@@ -219,12 +233,12 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
                 switch (worldVectorCount) {
                     case 0:
                         world.setGravity(worldVectorUp);
-                        spiderPig.getBody().setLinearVelocity(0f, jumpVelocity);
+                        spiderPig.getBody().setLinearVelocity(jumpVelocity2, jumpVelocity);
                         System.out.println("touchHandler - gravity UP");
                         break;
                     case 1:
                         world.setGravity(worldVectorDown);
-                        spiderPig.getBody().setLinearVelocity(0f, -1f*jumpVelocity);
+                        spiderPig.getBody().setLinearVelocity(jumpVelocity2, -1f*jumpVelocity);
                         System.out.println("touchHandler - gravity DOWN");
                         break;
                 }
@@ -238,10 +252,10 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
                 {
                     switch (worldVectorCount) {
                         case 0:
-                            spiderPig.getBody().setLinearVelocity(0f, -1f*jumpVelocity);
+                            spiderPig.getBody().setLinearVelocity(jumpVelocity2, -1f*jumpVelocity);
                             break;
                         case 1:
-                            spiderPig.getBody().setLinearVelocity(0f, jumpVelocity);
+                            spiderPig.getBody().setLinearVelocity(jumpVelocity2, jumpVelocity);
                             break;
                     }
                 }

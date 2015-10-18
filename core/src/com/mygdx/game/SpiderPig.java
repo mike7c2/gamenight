@@ -27,7 +27,7 @@ public class SpiderPig {
     private int y;
 
     public SpiderPig(World world, float width, float height, float startX, float startY) {
-        texture = new Texture(Gdx.files.internal("orangetest.bmp"));
+        texture = new Texture(Gdx.files.internal("spiderpig.png"));
         sprite = new Sprite(texture);
 
         sprite.setSize(width, height);
@@ -53,7 +53,9 @@ public class SpiderPig {
     }
 
     public void update() {
-        sprite.setPosition(body.getPosition().x, body.getPosition().y);
+        sprite.setPosition(body.getPosition().x - sprite.getWidth()/2, body.getPosition().y - sprite.getHeight()/2);
+        sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
+        sprite.setRotation(body.getAngle());
     }
 
     public Body getBody() {
