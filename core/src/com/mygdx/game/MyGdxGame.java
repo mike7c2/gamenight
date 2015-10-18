@@ -60,6 +60,8 @@ public class MyGdxGame extends ApplicationAdapter {
             count += 1;
 
             spiderPig.update();
+            top.update();
+            bottom.update();
             world.step(step, 1, 1);
 
         }

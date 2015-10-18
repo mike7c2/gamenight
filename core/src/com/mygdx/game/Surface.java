@@ -67,6 +67,15 @@ public class Surface{
         Fixture fixture = body.createFixture(fixtureDef);
     }
 
+    public void update()
+    {
+        sprite.setX(getX()+1);
+        if(sprite.getX() > Gdx.graphics.getWidth()) {
+            sprite.setX(0);
+        }
+
+    }
+
     public Sprite getSprite()
     {
         return sprite;
