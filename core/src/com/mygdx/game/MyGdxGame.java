@@ -60,7 +60,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         // Create spiderpig sprite
         batch = new SpriteBatch();
-        spiderPig = new SpiderPig(world);
+        spiderPig = new SpiderPig(world, Gdx.graphics.getWidth()/32, Gdx.graphics.getHeight()/24, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 
         // create surfaces and obstacles
 
@@ -159,7 +159,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         //Redraw all the guff
 		batch.begin();
 
-        spiderPig.getSprite().draw(batch);
+        spiderPig.draw(batch);
         top.draw(batch);
         bottom.draw(batch);
 
@@ -232,7 +232,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
                 doubleTouch = false;
                 touchedUp2 = false;
                 // flip spiderpig sprite to match new gravity
-                spiderPig.getSprite().flip(false,true);
+                spiderPig.flip();
             }else {
                 if (spiderPig != null)
                 {
