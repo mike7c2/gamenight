@@ -24,12 +24,13 @@ import sun.rmi.runtime.Log;
 public class MyGdxGame extends ApplicationAdapter implements ApplicationListener, InputProcessor {
     
 	SpriteBatch batch;
-	Texture img;
-
 	SpiderPig spiderPig;
 
     World world;
     Box2DDebugRenderer renderer;
+
+    Surface top;
+    Surface bottom;
 
 	@Override
 	public void create () {
@@ -39,6 +40,10 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         renderer = new Box2DDebugRenderer();
 
         spiderPig = new SpiderPig(world);
+
+        top = new Surface(world, true);
+        bottom = new Surface(world, false);
+
         // Initialize touch message text
         touchInit();
 	}
@@ -46,7 +51,6 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 	private double accumulator;
 	private double currentTime;
 	private float step = 1.0f / 60.0f;
-
     private int count = 0;
 
     // Touchscreen input stuff
@@ -84,6 +88,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 		batch.begin();
 
         spiderPig.getSprite().draw(batch);
+        top.getSprite().draw(batch);
+        bottom.getSprite().draw(batch);
 
         // Get screen touches and display messages
         touchHandler();
