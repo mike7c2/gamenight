@@ -24,54 +24,66 @@ import sun.rmi.runtime.Log;
 
 
 public class MyGdxGame extends ApplicationAdapter implements ApplicationListener, InputProcessor {
-    
+
+    // Spider pig sprite
 	SpriteBatch batch;
 	SpiderPig spiderPig;
 
+    // Physics world
     World world;
     Box2DDebugRenderer renderer;
     Vector2 worldVectorUp;
     Vector2 worldVectorDown;
-
+    // Bounding surfaces
     Surface top;
     Surface bottom;
-
+    // Obstacles
     List<Obstacle> obstacles = new ArrayList<Obstacle>();
+    // Physics
+    float gravity = 20f;
+    float jumpVelocity = 1000f;
 
 	@Override
 	public void create () {
-        batch = new SpriteBatch();
 
-        // create up and down world vectors for gravity switching
-        worldVectorUp = new Vector2(0,10);
-        worldVectorDown = new Vector2(0,-10);
-
-        world = new World(new Vector2(0,0),true);
+        // Create world with 2 possible gravity vectors
+        worldVectorUp = new Vector2(0,gravity);
+        worldVectorDown = new Vector2(0,-gravity);
+        world = new World(worldVectorUp,true);
         renderer = new Box2DDebugRenderer();
 
+        // Create spiderpig sprite
+        batch = new SpriteBatch();
         spiderPig = new SpiderPig(world);
 
+        // create surfaces and obstacles
         top = new Surface(world, true);
         bottom = new Surface(world, false);
-
         obstacles.add(new Obstacle(world));
 
-        // Initialize touch message text
+        // Initialize touch screen handling
         touchInit();
 	}
 
+    // Game step handling
 	private double accumulator;
 	private double currentTime;
 	private float step = 1.0f / 60.0f;
     private int count = 0;
 
-    // Touchscreen input stuff
+    // Touch handling stuff
     private Map<Integer,TouchInfo> touches = new HashMap<Integer,TouchInfo>();
     private String touchMessage = "Touch something already!";
     private int w,h;
-    private int worldVectorCount = 0;
-    boolean touchedDown = false;
-    boolean touchedUp = false;
+    private int worldVectorCount = 0;                                                               // tracks the current gravity vector: 0=UP; 1=DOWN
+    boolean touchedDown = false;                                                                    // touch down flag
+    boolean touchedUp = false;                                                                      // touch up flag (touch down must be true for this to be true)
+    boolean touchedUp2 = false;                                                                     // double touch up flag (false = 1st touch; true = 2nd touch)
+    boolean doubleTouch = false;                                                                    // double touch flag (true if a second touch comes quickly enough)
+    long touchTime = 0;                                                                             // time of last touch
+    long currentTouchTime = 0;                                                                      // current system time (could be temporary)
+    long doubleTouchThreshold = 500;                                                                // threshold time for a double touch
+
 
 	@Override
 	public void render() {
@@ -97,10 +109,9 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
                 o.update();
             }
 
-
             world.step(step, 1, 1);
 
-            // Get screen touches and display messages
+            // Handle screen touches
             touchHandler();
 
         }
@@ -165,32 +176,42 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     }
     public void touchHandler(){
         if(touchedUp) {
-            // flip gravity
-            worldVectorCount = (worldVectorCount + 1) % 2;
-            switch (worldVectorCount) {
-            case 0:
-//                worldVectorUp.set(0,1);
-                world.setGravity(worldVectorUp);
+            System.out.println("doubleTouch = " + Boolean.toString(doubleTouch) + ";  touchUp2 = " + Boolean.toString(touchedUp2));
+            if (doubleTouch){
+                // flip gravity
+                worldVectorCount = (worldVectorCount + 1) % 2;
+                switch (worldVectorCount) {
+                    case 0:
+                        world.setGravity(worldVectorUp);
+                        spiderPig.getBody().setLinearVelocity(0f, jumpVelocity);
+                        System.out.println("touchHandler - gravity UP");
+                        break;
+                    case 1:
+                        world.setGravity(worldVectorDown);
+                        spiderPig.getBody().setLinearVelocity(0f, -1f*jumpVelocity);
+                        System.out.println("touchHandler - gravity DOWN");
+                        break;
+                }
+                // reset double touch flags
+                doubleTouch = false;
+                touchedUp2 = false;
+                // flip spiderpig sprite to match new gravity
+                spiderPig.getSprite().flip(false,true);
+            }else {
                 if (spiderPig != null)
                 {
-                    spiderPig.getBody().setLinearVelocity(0f, 20f);
+                    switch (worldVectorCount) {
+                        case 0:
+                            spiderPig.getBody().setLinearVelocity(0f, -1f*jumpVelocity);
+                            break;
+                        case 1:
+                            spiderPig.getBody().setLinearVelocity(0f, jumpVelocity);
+                            break;
+                    }
                 }
-
-                System.out.println("touchHandler - gravity UP");
-                break;
-            case 1:
-//                worldVectorUp.set(0,-1);
-                world.setGravity(worldVectorDown);
-                if (spiderPig != null) {
-                    spiderPig.getBody().setLinearVelocity(0f, 20f);
-                }
-                System.out.println("touchHandler - gravity DOWN");
-                break;
+                System.out.println("touchHandler - jump");
             }
-
-            spiderPig.getSprite().flip(false,true);
-
-
+            // reset flags after touch is handled
             touchedDown = false;
             touchedUp = false;
         }
@@ -220,7 +241,21 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if(touchedDown){
+            currentTouchTime = System.currentTimeMillis();
             touchedUp = true;
+            if (touchedUp2){
+                if (currentTouchTime - touchTime < doubleTouchThreshold){
+                    doubleTouch = true;
+                }else {
+                    touchTime = currentTouchTime;
+                    doubleTouch = false;
+                }
+            } else {
+                touchTime = currentTouchTime;
+                System.out.println("touchTime = " + Long.toString(touchTime) + "; currentTime - touchTime = " + Long.toString(currentTouchTime - touchTime));
+                touchedUp2 = true;
+                doubleTouch = false;
+            }
         }
         return true;
     }

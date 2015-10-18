@@ -26,7 +26,7 @@ public class SpiderPig {
     {
         texture = new Texture(Gdx.files.internal("spiderpig.png"));
         sprite = new Sprite(texture);
-        sprite.setSize(100, 100);
+        sprite.setSize(200, 200);
         sprite.flip(false,true);
 
         BodyDef bodyDef = new BodyDef();
