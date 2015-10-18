@@ -40,11 +40,14 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     // Obstacles
     List<Obstacle> obstacles = new ArrayList<Obstacle>();
     // Physics
-    float gravity = 20f;
-    float jumpVelocity = 1000f;
+    float gravity = 0f;
+    float jumpVelocity = 0f;
 
 	@Override
 	public void create () {
+
+        gravity = Gdx.graphics.getHeight()/200;
+        jumpVelocity = Gdx.graphics.getHeight()/20;
 
         // Create world with 2 possible gravity vectors
         worldVectorUp = new Vector2(0,gravity);
