@@ -27,11 +27,11 @@ public class Obstacle{
 
     public Obstacle(World world)
     {
-        texture = new Texture(Gdx.files.internal("brick.jpg"));
+        texture = new Texture(Gdx.files.internal("dog.jpg"));
         sprite = new Sprite(texture);
 
 
-        sprite.setSize(Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/4);
+        sprite.setSize(Gdx.graphics.getWidth()/6, Gdx.graphics.getHeight()/4);
 
         sprite.setPosition(Gdx.graphics.getWidth()/3,Gdx.graphics.getHeight()/8);
 
@@ -52,10 +52,8 @@ public class Obstacle{
 
     public void update()
     {
-        count += Gdx.graphics.getWidth()/512;
+        count += Gdx.graphics.getWidth()/1024;
         body.setTransform(Gdx.graphics.getWidth() - (count % Gdx.graphics.getWidth()),0,0);
-
-        System.out.println("Obstacle : " + Float.toString(-(count % Gdx.graphics.getWidth())));
         sprite.setX(body.getPosition().x);
 
     }

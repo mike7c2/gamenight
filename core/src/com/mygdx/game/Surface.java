@@ -57,7 +57,7 @@ public class Surface{
 
     public void update()
     {
-        sprite.setX(getX() - Gdx.graphics.getWidth() / 512);
+        sprite.setX(getX() - Gdx.graphics.getWidth() / 1024);
         if(sprite.getX() < (-Gdx.graphics.getWidth())) {
             sprite.setX(0);
         }
