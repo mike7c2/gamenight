@@ -27,46 +27,32 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 	Texture img;
 
 	SpiderPig spiderPig;
-    Sprite spriteSpiderPig;
-    int countX = 0;
-    int countY = 0;
+
+    World world;
+    Box2DDebugRenderer renderer;
 
 	@Override
 	public void create () {
         batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.RED);
 
-        spiderPig = new SpiderPig();
+        world = new World(new Vector2(0, 10), true);
+        renderer = new Box2DDebugRenderer();
 
-        initBox2d();
-
+        spiderPig = new SpiderPig(world);
         // Initialize touch message text
         touchInit();
 	}
-    private BitmapFont font;
+
 	private double accumulator;
 	private double currentTime;
 	private float step = 1.0f / 60.0f;
 
     private int count = 0;
 
-    private World world;
-    private Box2DDebugRenderer renderer;
-
     // Touchscreen input stuff
     private Map<Integer,TouchInfo> touches = new HashMap<Integer,TouchInfo>();
     private String touchMessage = "Touch something already!";
     private int w,h;
-
-
-    private void initBox2d()
-    {
-        world = new World(new Vector2(0, -10), true);
-        renderer = new Box2DDebugRenderer();
-
-
-    }
 
 	@Override
 	public void render() {
@@ -80,13 +66,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
 		while ( accumulator >= step){
             //Step the game here
-
 			accumulator -= step;
             count += 1;
-
-            // spiderpig moving junk
-            countX ++;
-            countY ++;
 
             spiderPig.update();
             world.step(step, 1, 1);
@@ -102,7 +83,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         //Redraw all the guff
 		batch.begin();
 
-        batch.draw(spiderPig.getSprite(), spiderPig.getX(), spiderPig.getY());
+        spiderPig.getSprite().draw(batch);
 
         // Get screen touches and display messages
         touchHandler();
