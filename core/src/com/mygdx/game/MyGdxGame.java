@@ -28,6 +28,8 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
     World world;
     Box2DDebugRenderer renderer;
+    Vector2 worldVectorUp;
+    Vector2 worldVectorDown;
 
     Surface top;
     Surface bottom;
@@ -36,7 +38,10 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 	public void create () {
         batch = new SpriteBatch();
 
-        world = new World(new Vector2(0, 10), true);
+        // create up and down world vectors for gravity switching
+        worldVectorUp = new Vector2(0,1);
+        worldVectorDown = new Vector2(0,-1);
+        world = new World(worldVectorUp, true);
         renderer = new Box2DDebugRenderer();
 
         spiderPig = new SpiderPig(world);
@@ -57,6 +62,9 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     private Map<Integer,TouchInfo> touches = new HashMap<Integer,TouchInfo>();
     private String touchMessage = "Touch something already!";
     private int w,h;
+    private int worldVectorCount = 0;
+    boolean touchedDown = false;
+    boolean touchedUp = false;
 
 	@Override
 	public void render() {
@@ -76,6 +84,9 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
             spiderPig.update();
             world.step(step, 1, 1);
 
+            // Get screen touches and display messages
+            touchHandler();
+
         }
 
         //Do the drawing here
@@ -90,9 +101,6 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         spiderPig.getSprite().draw(batch);
         top.getSprite().draw(batch);
         bottom.getSprite().draw(batch);
-
-        // Get screen touches and display messages
-        touchHandler();
 
         batch.end();
 
@@ -124,8 +132,6 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         public boolean touched = false;
     }
 
-
-
     public void touchInit() {
         w = Gdx.graphics.getWidth();
         h = Gdx.graphics.getHeight();
@@ -135,21 +141,24 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         }
     }
     public void touchHandler(){
-        touchMessage = "";
-        for(int i = 0; i < 5; i++){
-            if(touches.get(i).touched)
-                touchMessage += "Finger:" + Integer.toString(i) + "; touch at:" +
-                        Float.toString(touches.get(i).touchX) +
-                        "," +
-                        Float.toString(touches.get(i).touchY) +
-                        "\n";
-
+        if(touchedUp) {
+            // flip gravity
+            worldVectorCount = (worldVectorCount + 1) % 2;
+            switch (worldVectorCount) {
+            case 0:
+//                worldVectorUp.set(0,1);
+                world.setGravity(worldVectorUp);
+                System.out.println("touchHandler - gravity UP");
+                break;
+            case 1:
+//                worldVectorUp.set(0,-1);
+                world.setGravity(worldVectorDown);
+                System.out.println("touchHandler - gravity DOWN");
+                break;
+            }
+            touchedDown = false;
+            touchedUp = false;
         }
-        System.out.println(touchMessage);
-//        TextBounds tb = font.getBounds(touchMessage);
-//        float x = w/2 - tb.width/2;
-//        float y = h/2 + tb.height/2;
-//        font.drawMultiLine(batch, touchMessage, x, y);
     }
 
     @Override
@@ -169,20 +178,14 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(pointer < 5){
-            touches.get(pointer).touchX = screenX;
-            touches.get(pointer).touchY = screenY;
-            touches.get(pointer).touched = true;
-        }
+        touchedDown = true;
         return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(pointer < 5){
-            touches.get(pointer).touchX = 0;
-            touches.get(pointer).touchY = 0;
-            touches.get(pointer).touched = false;
+        if(touchedDown){
+            touchedUp = true;
         }
         return true;
     }
