@@ -22,6 +22,9 @@ public class MyGdxGame extends ApplicationAdapter {
     World world;
     Box2DDebugRenderer renderer;
 
+    Surface top;
+    Surface bottom;
+
 	@Override
 	public void create () {
         batch = new SpriteBatch();
@@ -30,6 +33,10 @@ public class MyGdxGame extends ApplicationAdapter {
         renderer = new Box2DDebugRenderer();
 
         spiderPig = new SpiderPig(world);
+
+        top = new Surface(world, true);
+        bottom = new Surface(world, false);
+
 	}
 
 	private double accumulator;
@@ -67,6 +74,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.begin();
 
         spiderPig.getSprite().draw(batch);
+        top.getSprite().draw(batch);
+        bottom.getSprite().draw(batch);
 
         batch.end();
 
