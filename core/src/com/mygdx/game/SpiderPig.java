@@ -27,10 +27,11 @@ public class SpiderPig {
         texture = new Texture(Gdx.files.internal("spiderpig.png"));
         sprite = new Sprite(texture);
         sprite.setSize(100, 100);
+        sprite.flip(false,true);
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(sprite.getX(), sprite.getY());
+        bodyDef.position.set(Gdx.graphics.getWidth() / 2, sprite.getY());
 
         body = world.createBody(bodyDef);
 
@@ -47,6 +48,11 @@ public class SpiderPig {
     public void update()
     {
         sprite.setPosition(body.getPosition().x, body.getPosition().y);
+    }
+
+    public Body getBody()
+    {
+        return body;
     }
 
     public Sprite getSprite()

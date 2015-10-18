@@ -15,7 +15,9 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import sun.rmi.runtime.Log;
@@ -34,16 +36,17 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     Surface top;
     Surface bottom;
 
-    Obstacle obstacle;
+    List<Obstacle> obstacles = new ArrayList<Obstacle>();
 
 	@Override
 	public void create () {
         batch = new SpriteBatch();
 
         // create up and down world vectors for gravity switching
-        worldVectorUp = new Vector2(0,1);
-        worldVectorDown = new Vector2(0,-1);
-        world = new World(worldVectorUp, true);
+        worldVectorUp = new Vector2(0,10);
+        worldVectorDown = new Vector2(0,-10);
+
+        world = new World(new Vector2(0,0),true);
         renderer = new Box2DDebugRenderer();
 
         spiderPig = new SpiderPig(world);
@@ -51,7 +54,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         top = new Surface(world, true);
         bottom = new Surface(world, false);
 
-        obstacle = new Obstacle(world);
+        obstacles.add(new Obstacle(world));
 
         // Initialize touch message text
         touchInit();
@@ -88,7 +91,13 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
             spiderPig.update();
             top.update();
             bottom.update();
-            obstacle.update();
+
+            for (Obstacle o : obstacles)
+            {
+                o.update();
+            }
+
+
             world.step(step, 1, 1);
 
             // Get screen touches and display messages
@@ -108,7 +117,11 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         spiderPig.getSprite().draw(batch);
         top.getSprite().draw(batch);
         bottom.getSprite().draw(batch);
-        obstacle.getSprite().draw(batch);
+
+        for (Obstacle o : obstacles)
+        {
+            o.getSprite().draw(batch);
+        }
 
         batch.end();
 
@@ -158,14 +171,26 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
             case 0:
 //                worldVectorUp.set(0,1);
                 world.setGravity(worldVectorUp);
+                if (spiderPig != null)
+                {
+                    spiderPig.getBody().setLinearVelocity(0f, 20f);
+                }
+
                 System.out.println("touchHandler - gravity UP");
                 break;
             case 1:
 //                worldVectorUp.set(0,-1);
                 world.setGravity(worldVectorDown);
+                if (spiderPig != null) {
+                    spiderPig.getBody().setLinearVelocity(0f, 20f);
+                }
                 System.out.println("touchHandler - gravity DOWN");
                 break;
             }
+
+            spiderPig.getSprite().flip(false,true);
+
+
             touchedDown = false;
             touchedUp = false;
         }
