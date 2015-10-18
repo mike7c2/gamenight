@@ -30,7 +30,7 @@ public class Surface{
 
         Gdx.graphics.getHeight();
 
-        sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight() / 8);
+        sprite.setSize(Gdx.graphics.getWidth() * 2, Gdx.graphics.getHeight() / 8);
 
         if(top)
         {
@@ -69,11 +69,11 @@ public class Surface{
 
     public void update()
     {
-        sprite.setX(getX()+1);
-        if(sprite.getX() > Gdx.graphics.getWidth()) {
+        sprite.setX(getX()-1);
+        if(sprite.getX() < (-Gdx.graphics.getWidth())) {
             sprite.setX(0);
         }
-
+        System.out.println("Sprite X: " + sprite.getX());
     }
 
     public Sprite getSprite()
