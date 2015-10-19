@@ -42,16 +42,25 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
     Surface bottom;
     // Obstacles
     List<Obstacle> obstacles = new ArrayList<Obstacle>();
+
+    private BitmapFont font;
+
     // Physics
-    float gravity = 1.0f;
-    float jumpVelocity = 5.0f;
-    float jumpVelocity2 = 1.0f;
+    float gravity = 10.0f;
+    float jumpVelocity = 50.0f;
+    float jumpVelocity2 = 10.0f;
+    float cavernSpeed = -10.0f;
 
     //Game world size
-    float worldWidth = 100.0f;
-    float worldHeight = 40.0f;
+    float worldWidth = 1000.0f;
+    float worldHeight = 400.0f;
+
+    float obstacleWidth = worldWidth / 16;
+    float obstacleHeight = worldHeight / 8;
 
     private OrthographicCamera cam;
+
+
 
 
     Random randomGenerator = new Random();
@@ -72,14 +81,19 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         // create surfaces and obstacles
 
-        top = new Surface(world, worldWidth, worldHeight / 8, 16, 0, false, -1.0f);
-        bottom = new Surface(world, worldWidth, worldHeight / 8, 16, worldHeight, true, -1.0f);
+        top = new Surface(world, worldWidth, worldHeight / 8, 64, 0, false, cavernSpeed);
+        bottom = new Surface(world, worldWidth, worldHeight / 8, 64, worldHeight, true, cavernSpeed);
 
         //obstacles.add(new Obstacle(world));
 
-        cam = new OrthographicCamera(worldWidth, worldHeight);
+        cam = new OrthographicCamera(worldWidth, worldHeight + (worldHeight / 5));
         cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
         cam.update();
+
+
+
+        font = new BitmapFont();
+        font.setColor(Color.RED);
 
         // Initialize touch screen handling
         touchInit();
@@ -124,12 +138,12 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
             top.update();
             bottom.update();
 
-            //int obstacleChance = randomGenerator.nextInt(10000);
+            int obstacleChance = randomGenerator.nextInt(10000);
 
-            //if (obstacleChance > 9992)
-            //{
-            //    obstacles.add(new Obstacle(world));
-            //}
+            if (obstacleChance > 9992)
+            {
+                obstacles.add(new Obstacle(world, obstacleWidth, obstacleHeight, worldWidth, worldHeight/2));
+            }
 
 
             ArrayList<Obstacle> removeObstacles = new ArrayList<Obstacle>();
@@ -163,7 +177,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
         batch.setProjectionMatrix(cam.combined);
 
         //Clear the screen
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         //Redraw all the guff
@@ -176,11 +190,14 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         for (Obstacle o : obstacles)
         {
-            o.getSprite().draw(batch);
+            o.draw(batch);
         }
 
         Matrix4 debugMatrix=new Matrix4(cam.combined);
         //renderer.render(world, debugMatrix);
+
+        font.draw(batch, "Hello World", 0, worldHeight + (worldHeight / 10));
+
 
         batch.end();
 

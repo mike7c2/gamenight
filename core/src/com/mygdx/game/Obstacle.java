@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -20,30 +21,28 @@ public class Obstacle{
     private Texture texture;
     private Body body;
 
-    private int x;
-    private int y;
 
     private int count = 0;
 
     private boolean isGone = false;
 
-    public Obstacle(World world)
+    public Obstacle(World world, float width, float height, float x, float y)
     {
         texture = new Texture(Gdx.files.internal("dog.jpg"));
         sprite = new Sprite(texture);
 
 
-        sprite.setSize(Gdx.graphics.getWidth()/6, Gdx.graphics.getHeight()/4);
+        sprite.setSize(width, height);
 
-        sprite.setPosition(Gdx.graphics.getWidth()/3,Gdx.graphics.getHeight()/8);
+        sprite.setPosition(x,y);
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(sprite.getX(), sprite.getY());
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(x, y);
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(sprite.getWidth()/2, sprite.getHeight()/2);
+        shape.setAsBox(width/2, height/2);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -54,17 +53,15 @@ public class Obstacle{
 
     public void update()
     {
-        count += Gdx.graphics.getWidth()/1024;
+        sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
+        sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+        sprite.setRotation((float)Math.toDegrees(body.getAngle()));
 
-        body.setTransform(Gdx.graphics.getWidth() - count,0,0);
 
-        if (count > Gdx.graphics.getWidth())
+        if (body.getPosition().x < 0)
         {
             isGone = true;
         }
-
-        sprite.setX(body.getPosition().x);
-
     }
 
     public boolean isGone()
@@ -72,10 +69,11 @@ public class Obstacle{
         return isGone;
     }
 
-    public Sprite getSprite()
-    {
-        return sprite;
+    public void draw(Batch batch) {
+
+        sprite.draw(batch);
     }
+
 
     public float getX()
     {

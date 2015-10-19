@@ -32,6 +32,9 @@ public class Surface{
     float blockLength;
     float speed = -10.0f;
 
+    float smoothedValue;
+    float smoothing = 2;
+
     World world;
     boolean inverted;
 
@@ -40,7 +43,10 @@ public class Surface{
 
     private SurfaceBlock nextBlock()
     {
-        float blockThickness = this.thickness * (1 + (0.1f*randomGenerator.nextInt(10)));
+
+        smoothedValue += ((randomGenerator.nextInt(2000) / 1000.0f) - smoothedValue) / smoothing;
+
+        float blockThickness = this.thickness * (1 + (smoothedValue));
         if (inverted)
         {
             return new SurfaceBlock(world, texture, length + blockLength, bodyStartY - (blockThickness/2), blockLength, blockThickness, speed);

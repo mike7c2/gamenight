@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 
 /**
  * Created by mike on 18/10/15.
@@ -42,8 +43,10 @@ public class SpiderPig {
 
         body = world.createBody(bodyDef);
 
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(sprite.getWidth() / 2, sprite.getHeight() / 2);
+        CircleShape shape = new CircleShape();
+
+        //shape.setAsBox(sprite.getWidth() / 2, sprite.getHeight() / 2);
+        shape.setRadius(sprite.getWidth()/2);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -61,10 +64,10 @@ public class SpiderPig {
         Vector2 velo = body.getLinearVelocity();
         Vector2 dirVec = velo.add(1.5f, 0.0f);
 
-        sprite.setPosition(body.getPosition().x - sprite.getWidth()/2, body.getPosition().y - sprite.getHeight() / 2);
-        sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
-        sprite.setRotation(dirVec.angle());
-
+        sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
+        sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+        //sprite.setRotation(dirVec.angle());
+        sprite.setRotation((float)Math.toDegrees(body.getAngle()));
 
 
     }
