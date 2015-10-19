@@ -68,7 +68,7 @@ public class MyGdxGame extends ApplicationAdapter implements ApplicationListener
 
         // Create spiderpig sprite
         batch = new SpriteBatch();
-        spiderPig = new SpiderPig(world, worldWidth/32, worldHeight/24, worldWidth/2, worldHeight/2);
+        spiderPig = new SpiderPig(world, worldWidth/16, worldHeight/12, worldWidth/2, worldHeight/2);
 
         // create surfaces and obstacles
 

@@ -40,13 +40,13 @@ public class Surface{
 
     private SurfaceBlock nextBlock()
     {
-        float blockThickness = this.thickness * (1 + randomGenerator.nextInt(2));
+        float blockThickness = this.thickness * (1 + (0.1f*randomGenerator.nextInt(10)));
         if (inverted)
         {
-            return new SurfaceBlock(world, texture, length, bodyStartY - (blockThickness/2), blockLength, blockThickness, speed);
+            return new SurfaceBlock(world, texture, length + blockLength, bodyStartY - (blockThickness/2), blockLength, blockThickness, speed);
         }
         else {
-            return new SurfaceBlock(world, texture, length, bodyStartY + (blockThickness/2), blockLength, blockThickness, speed);
+            return new SurfaceBlock(world, texture, length + blockLength, bodyStartY + (blockThickness/2), blockLength, blockThickness, speed);
         }
     }
 
@@ -68,8 +68,15 @@ public class Surface{
 
         this.blockLength = blockLength;
 
-        for (int i = 0; i < (noOfBlocks + 1); i++) {
-            SurfaceBlock b = new SurfaceBlock(world, texture, (blockLength * i), bodyStartY, blockLength, thickness, speed);
+        for (int i = 0; i < (noOfBlocks + 2); i++) {
+            SurfaceBlock b;
+            if (inverted)
+            {
+                b = new SurfaceBlock(world, texture, (blockLength * (i + 1)), bodyStartY - (thickness / 2), blockLength, thickness, speed);
+            }
+            else {
+                b = new SurfaceBlock(world, texture, (blockLength * (i + 1)), bodyStartY + (thickness / 2), blockLength, thickness, speed);
+            }
             blocks.add(b);
         }
 
@@ -108,7 +115,7 @@ public class Surface{
         //Loop over each of the elements making up the surface and update them
         for (SurfaceBlock s : blocks)
         {
-            System.out.println("Drawing sprinte " + Float.toString(s.getSprite().getX()) + " " + Float.toString(s.getSprite().getY()));
+            //System.out.println("Drawing sprinte " + Float.toString(s.getSprite().getX()) + " " + Float.toString(s.getSprite().getY()));
             s.getSprite().draw(batch);
 
         }
@@ -124,7 +131,7 @@ public class Surface{
         public SurfaceBlock(World world, Texture texture, float startX, float startY, float width, float height, float speed)
         {
 
-            System.out.println("Generating surface block : " + Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(width) + " " + Float.toString(height));
+            //System.out.println("Generating surface block : " + Float.toString(startX) + " " + Float.toString(startY) + " " + Float.toString(width) + " " + Float.toString(height));
 
             sprite = new Sprite(texture);
             sprite.setSize(width, height);
@@ -169,7 +176,7 @@ public class Surface{
 
                 //Do any cleaning up here, dispose sprite and body.etc
                 world.destroyBody(body);
-                System.out.println("Removed body");
+                //System.out.println("Removed body");
             }
 
             return ret;
